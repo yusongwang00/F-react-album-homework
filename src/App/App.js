@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.scss';
-import { fetchUser } from '../apiUtil';
+import { fetchUser, fetchPhotos } from '../apiUtil';
 import Header from '../Header/Header';
 import Albums from '../Albums/Albums';
 import UserInfo from '../UserInfo/UserInfo';
@@ -10,25 +10,42 @@ class App extends Component {
     super(props);
     this.state = {
       user: {},
+      isUserLoaded: false,
+      error: null,
     };
   }
 
   componentDidMount() {
-    fetchUser().then((user) => {
-      this.setState({
-        user,
-      });
-    });
+    fetchUser().then(
+      (result) => {
+        this.setState({
+          isUserLoaded: true,
+          user: result,
+        });
+      },
+      (error) => {
+        this.setState({
+          isUserLoaded: true,
+          error,
+        });
+      }
+    );
   }
 
   render() {
-    const { user } = this.state;
+    const { isUserLoaded, user, error } = this.state;
+    if (error) {
+      return <div>Error: {error.message}</div>;
+    }
+    if (!isUserLoaded) {
+      return <div>Loading...</div>;
+    }
     return (
       <div data-testid="app" className="App">
         <Header user={user} />
         <main className="content">
           <Albums />
-          <UserInfo />
+          <UserInfo user={user} />
         </main>
       </div>
     );

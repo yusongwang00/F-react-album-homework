@@ -1,0 +1,7 @@
+.Photos {
+  display: flex;
+  // justify-content: space-between;
+}
+.Photos > * {
+  flex: 1 1 0;
+}
